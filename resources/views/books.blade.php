@@ -1,47 +1,96 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Welcome to the Bookstore</title>
+    <title>Our Library</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* ... (existing styles) ... */
-
-        body {
-            background-image: url("https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bGlicmFyeXxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80");
-            background-size: cover;
+        .side-panel {
+            position: fixed;
+            top: 3%;
+            right: -100%; /* Initially hidden to the right */
+            width: 500px;
+            height: 100%;
+            background-color: #f2f2f2;
+            padding: 20px;
+            box-shadow: -4px 0px 4px rgba(0, 0, 0, 0.2);
+            transition: right 0.3s ease-in-out;
+            z-index: 1000; /* Ensure the side panel is on top of other content */
+            overflow-y: auto; /* Add vertical scrollbar if content overflows */
+        }
+    
+        .side-panel.active {
+            right: 0; /* Slides in to the right */
+        }
+    
+        .side-panel .side-content {
+            display: flex;
             
-            background-position: center;
+            padding: 20px;
         }
-
-        .welcome-text {
+    
+        .side-panel .col-md-3 {
+            padding: 0;
+            flex: 0 0 30%;
+            display: flex;
+            flex-direction: column; /* Change to column layout */
+            justify-content: flex-start;
+            align-items: center; /* Center horizontally */
+            margin-bottom: 20px;
+        }
+    
+        .side-panel .col-md-3 img {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+    
+        .side-panel .col-md-9 {
+            padding: 0;
+            flex: 0 0 70%;
+        }
+    
+        .side-panel h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
             text-align: center;
-            color: white;
-            padding: 100px 0;
         }
-
-        .search-section {
-            text-align: center;
-            margin-top: -10px;
-            
+    
+        .book-info {
+            padding: 20px;
         }
-
-        .search-input {
-            margin-top: 5px;
-            width: 60%;
-            padding: 10px;
-            font-size: 16px;
+    
+        .book-description {
+            padding: 20px;
+            border-top: 1px solid #ccc;
+        }
+    
+        .book-description h4 {
+            margin-top: 10px;
+        }
+    
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            background: none;
             border: none;
-            border-radius: 5px;
-        }
-
-        .search-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
             cursor: pointer;
+        }
+    
+        .book-cover {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+        }
+    
+        .book-title {
+            margin-top: 20px;
+        }
+    
+        .author-name {
+            margin-top: 10px;
         }
     </style>
     
@@ -69,49 +118,53 @@
         </div>
     </nav>
 
-    <div class="container mt-4">
-        <h1>Welcome to the Bookstore</h1>
-        <div class="welcome-text">
-            <h2>Looking for something specific? We got you:</h2>
+    <div class="container-fluid mt-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>Our Library</h1>
+            <a href="/add_book" class="btn btn-primary">Add A Book</a>
         </div>
-
-        <div class="search-section">
-            <input type="text" class="search-input" placeholder="Enter your search...">
-            <button class="search-button">Search</button>
-        </div>
-
-        {{-- <div class="container mt-4">
-            <h2>Featured Authors</h2>
-            <div class="row">
-                <!-- Display some authors horizontally in three columns -->
-                @foreach ($authors as $author)
-                    <div class="col-md-6 mb-4 author-card">
-                        <div class="card">
-                            <img  src="{{ $author->image_url }}" class="card-img-top" alt="{{ $author->name }} Cover">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $author->firstname }}{{ $author->lastname }}</h5>
-                                <h6 class="card-title">{{ $author->write_up}}</h6>
-                                
-                            </div>
+        &nbsp;
+    
+        <div class="row">
+            @foreach ($books as $book)
+                <div class="col-md-2 mb-4 book-card">
+                    <div class="card">
+                        <img src="{{ $book->cover_url }}" class="card-img-top" alt="{{ $book->name }} Cover">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $book->name }}</h5>
+                            <h6 class="card-title">{{ $book->category }}</h6>
+                            <button class="btn btn-primary preview-btn" data-id="{{ $book->id }}">Preview</button>
                         </div>
                     </div>
-                @endforeach
-            </div>
-        </div> --}}
+                </div>
+            @endforeach
+        </div>
     </div>
 
-    {{-- <div class="container mt-4 contact-form">
-        <h2>Feel Free to Contact Us</h2>
-        <form action="/contact" method="post">
-            <!-- Contact form fields -->
-            <!-- ... (add your form fields here) ... -->
-
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div> --}}
-
     
-    
+    <div class="side-panel">
+        <button class="close-button">&times;</button>
+        <div class="side-content d-flex">
+            <div class="col-md-3 text-center">
+                <img src="" alt="Book Cover" id="bookCover" class="img-fluid">
+            </div>
+            
+            <div class="col-md-9">
+                <div class="book-info">
+                    <h2 id="bookTitle"></h2>
+                    <p><strong>ISBN:</strong> <span id="bookIsbn" class="book-isbn"></span></p>
+                    <p><strong>Pages:</strong> <span id="bookPages" class="book-pages"></span></p>
+                    <p><strong>Category:</strong> <span id="bookCategory" class="book-category"></span></p>
+                    <p><strong>Author:</strong> <span id="authorName" class="author-name"></span></p>
+                </div>
+                <div class="book-description">
+                    <h4>Description</h4>
+                    <p id="bookDescription" class="book-description-content"></p>
+                    {{-- <a href="{{ route('edit_book', ['id' => $book->id]) }}" class="btn btn-primary">Edit Book</a> --}}
+                 </div>
+            </div>
+        </div>
+    </div>
     
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
